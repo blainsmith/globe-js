@@ -1,0 +1,23 @@
+
+<html>
+	<script src="https://tidwall.com/pinhole/pinhole.js"></script>
+	<script src="globe.land.js"></script>
+	<script src="globe.countries.js"></script>
+    <script src="globe.js"></script>
+	<body style="text-align:center;">
+		<canvas width="1000" height="1000" style="width:500px;height:500px" id="globe"></canvas>
+	</body>
+	<script>
+		(function(){
+            var canvas = document.getElementById("globe")
+
+            var globe = new Globe()
+            globe.drawCountryBoundaries()
+            globe.drawGraticule(15)
+            globe.drawDot(40.730610, -73.935242, .05)
+            globe.centerOn(40, -65)
+            globe.render(canvas)
+		}())
+	</script>
+	
+</html>

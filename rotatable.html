@@ -1,0 +1,80 @@
+
+<html>
+	<script src="https://tidwall.com/pinhole/pinhole.js"></script>
+	<script src="globe.land.js"></script>
+	<script src="globe.countries.js"></script>
+    <script src="globe.js"></script>
+	<body style="text-align:center;">
+		<canvas width="1000" height="1000" style="width:500px;height:500px" id="globe"></canvas>
+	</body>
+	<script>
+		(function(){
+			fetch('https://gist.githubusercontent.com/erdem/8c7d26765831d0f9a8c62f02782ae00d/raw/248037cd701af0a4957cce340dabb0fd04e38f4c/countries.json')
+			.then(function(res){
+				return res.json()
+			})
+			.then(function(json){
+				var canvas = document.getElementById("globe")
+				var drag = false;
+				var dragStart;
+				var dragEnd;
+				var center = {
+					lat: 40.730610,
+					lng: -73.935242
+				}
+				var home = {
+					lat: 40.730610,
+					lng: -73.935242
+				}
+
+				function draw(){
+					var globe = new Globe()
+					globe.drawCountryBoundaries()
+					globe.drawGraticule(10, 'gainsboro')
+
+					json.forEach(function(country){
+						globe.drawDot(country.latlng[0], country.latlng[1], 0.05, 'rgba(255, 0, 0, .5)')
+					});
+
+					globe.drawDot(home.lat, home.lng, .1, 'purple')
+					
+					globe.centerOn(center.lat, center.lng)
+					globe.render(canvas)
+				}
+
+				canvas.addEventListener('mousedown', function(event) {
+					dragStart = {
+						x: event.pageX - canvas.offsetLeft,
+						y: event.pageY - canvas.offsetTop
+					}
+
+					drag = true;
+				})
+
+				canvas.addEventListener('mousemove', function(event) {
+					if (drag) {
+						dragEnd = {
+							x: event.pageX - canvas.offsetLeft,
+							y: event.pageY - canvas.offsetTop
+						}
+
+						center.lat -= (dragStart.y - dragEnd.y)*.1
+						center.lng += (dragStart.x - dragEnd.x)*.1
+
+						console.log(center)
+						
+						dragStart = dragEnd
+						draw()
+					}
+				})
+
+				canvas.addEventListener('mouseup', function(event) {
+					drag = false;
+				})
+
+				draw()
+			})
+		}())
+	</script>
+	
+</html>
